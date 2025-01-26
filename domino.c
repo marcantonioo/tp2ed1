@@ -1,28 +1,28 @@
 #include "domino.h"
 
-dominol* DominoCria(int tamanho){
-    dominol *domino = (dominol*) malloc(sizeof(dominol)); 
+domino* DominoCria(int tamanho){
+    domino *tabuleiro = (domino*) malloc(sizeof(domino)); 
     if (domino == NULL)
         return NULL;
-    domino->tamanho = tamanho;
-    domino->cab = (peca*) malloc(sizeof(peca));
-    domino->cab->prox = NULL;
-    return domino;
+    tabuleiro->tamanho = tamanho;
+    tabuleiro->cab = (peca*) malloc(sizeof(peca));
+    tabuleiro->cab->prox = NULL;
+    return tabuleiro;
 }
 
-bool DominoDestroi(dominol* domino){
-    peca* aux = domino->cab;
+bool DominoDestroi(domino* tabuleiro){
+    peca* aux = tabuleiro->cab;
     while(aux != NULL){
         peca* auxx = aux->prox;
         free(aux);
         aux = auxx;
     }
-    free(domino);
+    free(tabuleiro);
     return true;
 }
 
-bool DominoAdicionaPeca(dominol* domino, peca* peca){
-    peca* aux = domino->cab;
+bool DominoAdicionaPeca(domino* tabuleiro, peca* peca){
+    peca* aux = tabuleiro->cab;
     while(aux->prox != NULL){
         aux = aux->prox;
     }
@@ -32,9 +32,36 @@ bool DominoAdicionaPeca(dominol* domino, peca* peca){
     return true;
 }
 
-void DominoImprime(dominol* dominoPronto){
-    peca* aux = domino->cab->prox;
+void DominoImprime(domino* tabPronto){
+    peca* aux = tabPronto->cab->prox;
     while(aux != NULL){
         printf("%d%d|", aux->x, aux->y);
     }
+}
+
+bool DominoEhPossivelOrganizar(domino* tabuleiro, peca* aux){
+    if (pecateste == NULL)
+        aux = tabuleiro->cab->prox;
+        while(aux != NULL){
+            if (aux->y == aux->prox->x){
+                aux = aux->prox;
+                continue;
+                }
+            else
+                return false;
+        }
+
+    if (aux2 == NULL)
+        return false;
+
+}
+
+int Compara2Peca(peca* aux){
+    if (aux->y == aux->prox->y){
+        return 1;
+    }
+    else if (aux->y == aux->prox->x){
+        return 2;
+    }
+    return 0;
 }
