@@ -13,18 +13,17 @@ typedef struct domino
     int y;
     struct domino *prox;
     struct domino *ant;
-}peca;
+}Peca;
 
-typedef struct Lista
-{
+typedef struct {
     int tamanho;
-    peca* cab;
-}dominol;
+    peca *pInicio, *pFinal;
+}Dominol;
 
 
-dominol DominoCria();
+Dominol DominoCria();
 bool DominoDestroi();
-bool DominoAdicionaPeca();
+bool DominoAdicionaPecaFinal();
 bool DominoImprime();
 bool DominoEhPossivelOrganizar();
 
