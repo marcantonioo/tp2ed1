@@ -11,20 +11,23 @@ typedef struct domino
 {
     int x;
     int y;
+    bool foiUsada;
     struct domino *prox;
     struct domino *ant;
 }Peca;
 
 typedef struct {
     int tamanho;
-    peca *pInicio, *pFinal;
+    Peca *pInicio, *pFim;
 }Dominol;
 
 
-Dominol DominoCria();
-bool DominoDestroi();
-bool DominoAdicionaPecaFinal();
-bool DominoImprime();
-bool DominoEhPossivelOrganizar();
+Dominol* dominoCria();
+bool dominoDestroi();
+bool dominoAdicionaPecaInicio();
+bool dominoAdicionaPecaFinal();
+bool dominoResolve();
+void dominoImprime();
+bool dominoEhPossivelOrganizar();
 
 #endif
