@@ -32,19 +32,26 @@ bool dominoAdicionaPecaFinal(Dominol* tabuleiro, Peca* peca){
     if (tabuleiro == NULL ||peca == NULL)
         return false;
     Peca *novaPeca = (Peca*) malloc(sizeof(Peca));
-    Peca* auX = tabuleiro->pFim;//ultima celula atual
-    if(novaPeca == NULL)
+    if(novaPeca == NULL){
+        dominoDestroi(tabuleiro);
         return false;
+    }
+       
 
     novaPeca->x = peca->x;//talvez se colocar uma struct só com x e y
     novaPeca->y = peca->y;
     novaPeca->prox = NULL;
-    auX->prox = novaPeca;
-    novaPeca->ant = auX;
-    tabuleiro->pFim = novaPeca;//aloca mais uma
-    //tabuleiro->pFim->prox = NULL;//a préxima rebebe NULL
-   
-    
+
+    if (tabuleiro->pInicio == tabuleiro->pFim) {
+        novaPeca->ant = tabuleiro->pInicio;
+        tabuleiro->pInicio->prox = novaPeca;
+    } else {
+        novaPeca->ant = tabuleiro->pFim;
+        tabuleiro->pFim->prox = novaPeca;
+    }
+
+    tabuleiro->pFim = novaPeca;
+
     return true;
 } 
 
@@ -82,17 +89,22 @@ bool dominoAdicionaPecaFinal(Dominol* tabuleiro, Peca* peca){
 //so chmar se peca tiver organizada
 bool dominoAdicionaPecaInicio(Dominol *tabuleiro, Peca *peca){
     Peca* novaPeca = (Peca*) malloc(sizeof(Peca));
-    Peca *aux = tabuleiro->pInicio->prox;//celula dpss da beça ante de eu mudar o baguio
-    tabuleiro->pInicio->ant = novaPeca;//o antigo 1º no aponta pra o que acabou de ser criaido
     if(novaPeca == NULL)
         return false;
+
     novaPeca->x = peca->x;
     novaPeca->y = peca->y;
-    tabuleiro->pInicio->prox = novaPeca;
-    if (tabuleiro->pInicio->prox == NULL)
-        tabuleiro->pFim = tabuleiro->pInicio;
+
+    novaPeca->prox = tabuleiro->pInicio->prox;
     novaPeca->ant = tabuleiro->pInicio; //Apont pra cabeça
-    novaPeca->prox = aux;//aponta pra antiga primeira celula
+
+    if(tabuleiro->pInicio->prox != NULL)
+        tabuleiro->pInicio->prox->ant = novaPeca;
+    else
+        tabuleiro->pFim = novaPeca;
+
+    tabuleiro->pInicio->prox = novaPeca;
+  
     return true;
 }
 
@@ -139,13 +151,18 @@ void dominoInvertePeca(Peca **peca){
 
 void dominoImprime(Dominol* tabPronto){
     if(tabPronto->pInicio == NULL || tabPronto->pInicio->prox == NULL){
-        printf("Tabuleiro Vazio\n");
+        // printf("Tabuleiro Vazio\n");
         return;
     }
     Peca* aux = tabPronto->pInicio->prox;
     while(aux != NULL){
+        if(aux->prox == NULL){
+            printf("%d%d", aux->x, aux->y);
+            break;
+        }
         printf("%d%d|", aux->x, aux->y);
         aux = aux->prox;
+
     }   
 }
  
@@ -154,74 +171,86 @@ void dominoImprime(Dominol* tabPronto){
 bool dominoResolve(Dominol *tabuleiro){
     int tam = 1;
     Dominol *aux = dominoCria(tam);
-    bool control = false;//controlar se houve inserção
+   // bool control = false;//controlar se houve inserção
 
     tabuleiro->pInicio->prox->foiUsada = true;
     dominoAdicionaPecaInicio(aux, tabuleiro->pInicio->prox);//o auxiliar começa com a 1º peça do 
     Peca *JogoOriginal = tabuleiro->pInicio->prox->prox;
-    dominoImprime(aux);
-    
+    // dominoImprime(aux);
+
+    //inicia o domino auxiliar colocando a primeira peça pra iniciar
+   // while(aux->tamanho != tabuleiro->tamanho  control == false){
+     //   JogoOriginal = tabuleiro->pInicio;
+
         while(JogoOriginal != NULL){//qunado sair desse while percorreu todas as peças inserindo ou não
 
-            control = false;
+            //control = false;
             // printf("\nEntrou\n");
             if((aux->pInicio->prox->x == JogoOriginal->y) && JogoOriginal->foiUsada == false){//inserir no início;
+                // printf("Entrou no if maldito nº 1\n");
                 // printf("VAlor do JogoOriginal: %d %d\n",JogoOriginal->x, JogoOriginal->y);
+                //  dominoImprime(aux);
+                //  printf("\n");
                 dominoAdicionaPecaInicio(aux, JogoOriginal);
+                //  dominoImprime(aux);
                 JogoOriginal->foiUsada = true;
                 JogoOriginal = JogoOriginal->prox;
                 //JogoAuxiliar = JogoAuxiliar->prox;
                 aux->tamanho++;
-                control = true;
-            }   
+                JogoOriginal = tabuleiro->pInicio->prox;
+                //control = true;
+            } else  
 
-                // printf("\naux->pFim: %d, %d", aux->pFim->x, aux->pFim->y);
-                // printf("\n\naux->pFim->ant: %d, %d", aux->pFim->ant->x, aux->pFim->ant->y);
-                // printf("\naux->pFim->prox: %d, %d", aux->pFim->prox->x, aux->pFim->prox->y);
-                // printf("\n JogoOriginal: %d, %d\n\n", JogoOriginal->x, JogoOriginal->y);
+            //   /*   printf("\naux->pFim: %d, %d", aux->pFim->x, aux->pFim->y);
+                //printf("\n\naux->pFim->ant: %d, %d", aux->pFim->ant->x, aux->pFim->ant->y);
+                //printf("\naux->pFim->prox: %d, %d", aux->pFim->prox->x, aux->pFim->prox->y);
+                // printf("\n JogoOriginal: %d, %d\n\n", JogoOriginal->x, JogoOriginal->y); */
 
 
-            if( (aux->pFim->ant != NULL && aux->pFim != NULL)  && (aux->pFim->ant->y == JogoOriginal->x) && JogoOriginal->foiUsada == false){//inserir no final
-                // printf("Entrou no if maldito\n");
-                dominoImprime(aux);
+            if((aux->pFim->y == JogoOriginal->x) && JogoOriginal->foiUsada == false){//inserir no final
+                // printf("Entrou no if maldito nº 2\n");
+                // dominoImprime(aux);
                 dominoAdicionaPecaFinal(aux, JogoOriginal);
                 // printf("\nDepois de adicionar: ");
-                dominoImprime(aux);
+                // dominoImprime(aux);
                 // printf("\n\n");
                 JogoOriginal->foiUsada = true;
                 JogoOriginal = JogoOriginal->prox;
                 //JogoAuxiliar = JogoAuxiliar->prox;
                 aux->tamanho++;
-                control = true;
+                JogoOriginal = tabuleiro->pInicio->prox;
+                //control = true;
             }else
             
-            if((aux->pFim->prox != NULL) && (aux->pFim->ant->y == JogoOriginal->y) && JogoOriginal->foiUsada == false){//inserir no fim;
-                // printf("aux->pFim->ant: %d %d\n",aux->pFim->ant->x, aux->pFim->ant->y);
+            if(/* (aux->pFim != NULL)  &&*/ (aux->pFim->y == JogoOriginal->y) && JogoOriginal->foiUsada == false){//inserir no inicio;
+                //  printf("Entrou no if maldito nº 3\n");
+                //printf("aux->pFim->ant: %d %d\n",aux->pFim->ant->x, aux->pFim->ant->y);
                 dominoInvertePeca(&JogoOriginal);
-                dominoAdicionaPecaInicio(aux, JogoOriginal);
+                // dominoImprime(aux);
+                // printf("\n");
+                dominoAdicionaPecaFinal(aux, JogoOriginal);
+                // dominoImprime(aux);
                 JogoOriginal->foiUsada = true;
                 JogoOriginal = JogoOriginal->prox;
                 aux->tamanho++;
-                control = true;
+                JogoOriginal = tabuleiro->pInicio->prox;
+                //control = true;
             }else
 
-            if ((aux->pInicio->prox->x == JogoOriginal->x) && JogoOriginal->foiUsada == false){//inserir no início;
-                printf("VAlor do JogoOriginal: %d %d\n",JogoOriginal->x, JogoOriginal->y);
-                dominoImprime(aux);
+            if ((aux->pInicio->prox->x == JogoOriginal->x) && JogoOriginal->foiUsada == false){//inserir no final; */
+                //printf("VAlor do JogoOriginal: %d %d\n",JogoOriginal->x, JogoOriginal->y);
+                // printf("Entrou no if maldito nº 4\n");
+                // dominoImprime(aux);
                 dominoInvertePeca(&JogoOriginal);
                 dominoAdicionaPecaInicio(aux, JogoOriginal);
                 JogoOriginal->foiUsada = true;
                 JogoOriginal = JogoOriginal->prox;
                 //JogoAuxiliar = JogoAuxiliar->prox;
                 aux->tamanho++;
-                control = true;
-            }
-
-            else  
-            
-            if(control){
                 JogoOriginal = tabuleiro->pInicio->prox;
-            }else{//aqui é se não deu pra inserir no inicio nem no final
+                //control = true;
+            }else
+            {//aqui é se não deu pra inserir no inicio nem no final
                 //vou passar para a proxima peça
                 JogoOriginal = JogoOriginal->prox;
             }
@@ -233,21 +262,25 @@ bool dominoResolve(Dominol *tabuleiro){
     // printf("Tamnho do original: %d\n", tabuleiro->tamanho);
     //printf("O valor booleano é: %s\n", control ? "true" : "false");
     if(aux->tamanho == tabuleiro->tamanho){
-        // printf("Deu Certo: ");
+        //printf("Deu Certo: ");
         //dominoImprime(tabuleiro);
-        // printf("\n");
+        //printf("\n");
+        printf("YES\n");
         dominoImprime(aux);
-        // printf("\n");
+        printf("\n\n");
+        dominoDestroi(aux);
         return true;
     }else{
-        // printf("Não deu certo: ");
-       // dominoImprime(tabuleiro);
-        // printf("\n");
-        dominoImprime(aux);
-        // printf("\n");
+        //printf("Não deu certo: ");
+        //dominoImprime(tabuleiro);
+        //printf("\n");
+        //dominoImprime(aux);
+        printf("NO\n\n");
+        dominoDestroi(aux);
         return false;
     }
     
+
 }
 
 // bool DominoEhPossivelOrganizar(Domino* tabuleiro, Peca* aux){
