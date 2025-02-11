@@ -21,7 +21,7 @@ typedef struct {
     Peca *pInicio, *pFim;
 }Dominol;
 
-
+void falso();
 Dominol* dominoCria();
 bool dominoDestroi();
 bool dominoAdicionaPecaInicio();
@@ -29,5 +29,7 @@ bool dominoAdicionaPecaFinal();
 bool dominoResolve();
 void dominoImprime();
 bool dominoEhPossivelOrganizar();
+void atualizaPonteiros();
+void dominoLer();
 
 #endif

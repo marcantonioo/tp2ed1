@@ -3,25 +3,33 @@
 
 int main(){
     int n, i = 1;
+    bool jaResolveu;
     Dominol *jogo;
+    Peca *pPecaInicial;
     scanf("%d", &n);
     while(n != 0){
-        jogo = dominoCria(n);
-        Peca *aux = malloc(sizeof(Peca));
-   
-        //printf("Testanto inserir final: ");
-        for(int i = 0; i < n; i++){
-            scanf("%d%d", &aux->x, &aux->y);
-            aux->foiUsada = false;
-            dominoAdicionaPecaFinal(jogo, aux);
+        jogo = dominoCria(n); 
+        dominoLer(jogo, n);
+
+        pPecaInicial = jogo->pInicio->prox;
+       // dominoResolve(&jogo, pPecaInicial);
+        do{
+            jaResolveu = dominoResolve(&jogo, pPecaInicial);
+            
+            if (jaResolveu)
+                break;
+            pPecaInicial = pPecaInicial->prox;
+            falso(jogo);
+        }while(pPecaInicial != NULL);
+
+        if(jaResolveu){//se entru aqui é pq deu certo e resolveu
+            printf("Test %d:\nYES\n", i);
+            dominoImprime(jogo);
+        }else{
+            printf("Test %d:\nNO\n\n\n", i);
         }
-
-        printf("Test %d:\n", i);
-        dominoImprime(jogo);
-        dominoResolve(jogo);
-
         i++;
-        free(aux);
+       // free(aux);
         scanf("%d", &n);
         printf("\n\n");
         dominoDestroi(jogo);
