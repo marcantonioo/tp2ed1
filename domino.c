@@ -10,8 +10,10 @@ void falso(Dominol *tabuleiro){
         if(aux->prox == NULL){
             aux->foiUsada = false;
             break;
+        }else{
+            aux->foiUsada = false;
+            aux = aux->prox;
         }
-        aux = aux->prox;
     }   
 }
 

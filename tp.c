@@ -11,15 +11,18 @@ int main(){
         jogo = dominoCria(n); 
         dominoLer(jogo, n);
 
+        //Peca *pAux;
         pPecaInicial = jogo->pInicio->prox;
        // dominoResolve(&jogo, pPecaInicial);
         do{
-            jaResolveu = dominoResolve(&jogo, pPecaInicial);
             
+            jaResolveu = dominoResolve(&jogo, pPecaInicial);
             if (jaResolveu)
                 break;
             pPecaInicial = pPecaInicial->prox;
             falso(jogo);
+            
+            
         }while(pPecaInicial != NULL);
 
         if(jaResolveu){//se entru aqui é pq deu certo e resolveu
