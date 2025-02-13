@@ -7,13 +7,8 @@ void falso(Dominol *tabuleiro){
     }
     Peca* aux = tabuleiro->pInicio->prox;
     while(aux != NULL){
-        if(aux->prox == NULL){
-            aux->foiUsada = false;
-            break;
-        }else{
             aux->foiUsada = false;
             aux = aux->prox;
-        }
     }   
 }
 
@@ -45,25 +40,6 @@ bool dominoDestroi(Dominol* tabuleiro){
     return true;
 } 
 
-/* bool dominoDestroi(Dominol* tabuleiro) {
-    if (tabuleiro == NULL)
-        return false;
-
-    Peca* aux = tabuleiro->pInicio;
-    while (aux != NULL) {
-        Peca* aux2 = aux->prox;
-        free(aux);
-        aux = aux2;
-    }
-
-    free(tabuleiro);
-    
-    // Zerar ponteiros para evitar uso de memória liberada
-    tabuleiro = NULL;
-
-    return true;
-} */
-
 //antes de chamar essa func, a peça tem que estar na posiçao certa, seja invertida ou não
 bool dominoAdicionaPecaFinal(Dominol* tabuleiro, Peca* peca){
     if (tabuleiro == NULL ||peca == NULL)
@@ -87,6 +63,42 @@ bool dominoAdicionaPecaFinal(Dominol* tabuleiro, Peca* peca){
 
     return true;
 } 
+
+
+bool adicionaPecaMeio(Dominol *tabuleiro, Peca *pecaAnterior, Peca *pecaSeguinte, Peca *novaPeca) {
+    // Verifica se os parâmetros são válidos
+    if (tabuleiro == NULL || pecaAnterior == NULL || pecaSeguinte == NULL || novaPeca == NULL) {
+        return false; // Parâmetros inválidos
+    }
+
+    // Verifica se as peças são consecutivas
+    if (pecaAnterior->prox != pecaSeguinte || pecaSeguinte->ant != pecaAnterior) {
+        return false; // As peças não estão corretamente conectadas
+    }
+
+    // Aloca uma nova peça para evitar modificar `novaPeca` diretamente
+    Peca *nova = (Peca*) malloc(sizeof(Peca));
+    if (nova == NULL) {
+        return false; // Falha na alocação de memória
+    }
+
+    // Copia os valores da peça fornecida
+    nova->x = novaPeca->x;
+    nova->y = novaPeca->y;
+    nova->foiUsada = false;
+
+    // Insere a nova peça na lista
+    nova->ant = pecaAnterior;
+    nova->prox = pecaSeguinte;
+    pecaAnterior->prox = nova;
+    pecaSeguinte->ant = nova;
+
+    // Atualiza o tamanho do tabuleiro
+    tabuleiro->tamanho++;
+
+    return true; // Inserção bem-sucedida
+}
+
 
 //so chmar se peca tiver organizada
 bool dominoAdicionaPecaInicio(Dominol *tabuleiro, Peca *peca){
@@ -157,6 +169,7 @@ bool dominoResolve(Dominol **tabuleiro, Peca *pPecaInicial){
     dominoAdicionaPecaInicio(aux, pPecaInicial);//o auxiliar começa com a 1º peça do 
     //Peca *JogoOriginal = pPecaInicial->prox;
     Peca *JogoOriginal = (*tabuleiro)->pInicio->prox;
+    ///printf("[%d-%d]\n",JogoOriginal->ant->x,JogoOriginal->ant->y);
 
     //inicia o domino auxiliar colocando a primeira peça pra iniciar
    // while(aux->tamanho != tabuleiro->tamanho  control == false){
@@ -190,11 +203,35 @@ bool dominoResolve(Dominol **tabuleiro, Peca *pPecaInicial){
         dominoDestroi(*tabuleiro);
         (*tabuleiro) = aux;
         return true;
-    }else{
-        printf("\n");
-        dominoImprime(aux);
-        printf("\n");
+    }else 
+    if(aux->tamanho == ((*tabuleiro)->tamanho) - 1 && (*tabuleiro)->tamanho > 2){
+        JogoOriginal= (*tabuleiro)->pInicio->prox;
+        while(JogoOriginal != NULL){
+            if((JogoOriginal->foiUsada == false) && JogoOriginal->x == JogoOriginal->y){
+                //printf("\n\n%d [%d %d]\n\n",JogoOriginal->foiUsada, JogoOriginal->x, JogoOriginal->y);
+                break;
+            }
+            JogoOriginal = JogoOriginal->prox;
+        }
+        //nesse momento JogoOriginal é a peça que não foi usada
+        Peca *JogoDoAux = aux->pInicio->prox;
+        while(JogoDoAux->prox != NULL){
+            if(JogoDoAux->y == JogoOriginal->x){
+               // printf("\n\nJogoDoAux: {%d%d} [%d%d] {%d%d}\n\n", JogoDoAux->x, JogoDoAux->y, JogoOriginal->x, JogoOriginal->y, JogoDoAux->prox->x, JogoDoAux->prox->y);
+                break;
+            }
+            JogoDoAux = JogoDoAux->prox;
+        }
+
+        //dominoImprime(aux);
+        adicionaPecaMeio(aux, JogoDoAux, JogoDoAux->prox, JogoOriginal);
+        dominoDestroi(*tabuleiro);
+        (*tabuleiro) = aux;
+        return true;
+    }else{//se não encontrou solução retorna false 
         dominoDestroi(aux);
         return false;
     }
 }
+
+

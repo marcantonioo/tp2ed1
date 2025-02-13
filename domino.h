@@ -26,6 +26,7 @@ Dominol* dominoCria();
 bool dominoDestroi();
 bool dominoAdicionaPecaInicio();
 bool dominoAdicionaPecaFinal();
+bool adicionaPecaMeio();
 bool dominoResolve();
 void dominoImprime();
 bool dominoEhPossivelOrganizar();

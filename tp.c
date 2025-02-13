@@ -13,28 +13,29 @@ int main(){
 
         //Peca *pAux;
         pPecaInicial = jogo->pInicio->prox;
-       // dominoResolve(&jogo, pPecaInicial);
         do{
-            
-            jaResolveu = dominoResolve(&jogo, pPecaInicial);
-            if (jaResolveu)
+            //dominoImprime(jogo);
+            falso(jogo);
+            //printf("\n");
+            jaResolveu =  dominoResolve(&jogo, pPecaInicial);
+            if(jaResolveu)
                 break;
             pPecaInicial = pPecaInicial->prox;
-            falso(jogo);
-            
-            
+           
         }while(pPecaInicial != NULL);
 
         if(jaResolveu){//se entru aqui é pq deu certo e resolveu
             printf("Test %d:\nYES\n", i);
             dominoImprime(jogo);
+            printf("\n\n");
         }else{
-            printf("Test %d:\nNO\n\n\n", i);
+            printf("Test %d:\nNO\n", i);
+            printf("\n");
         }
         i++;
        // free(aux);
         scanf("%d", &n);
-        printf("\n\n");
+        //printf("\n");
         dominoDestroi(jogo);
        
 
