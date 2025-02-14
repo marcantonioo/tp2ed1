@@ -10,18 +10,13 @@ int main(){
     while(n != 0){
         jogo = dominoCria(n); 
         dominoLer(jogo, n);
-
-        //Peca *pAux;
         pPecaInicial = jogo->pInicio->prox;
-        do{
-            //dominoImprime(jogo);
-            falso(jogo);
-            //printf("\n");
-            jaResolveu =  dominoResolve(&jogo, pPecaInicial);
+        do{ 
+            dominoFalsificaPecas(jogo);
+            jaResolveu =  dominoEhPossivelOrganizar(&jogo, pPecaInicial);//tenta organizar começando da primeira peça
             if(jaResolveu)
                 break;
-            pPecaInicial = pPecaInicial->prox;
-           
+            pPecaInicial = pPecaInicial->prox;//se não deu com a primeira avança até o final da lista de paças testando começar com todas        
         }while(pPecaInicial != NULL);
 
         if(jaResolveu){//se entru aqui é pq deu certo e resolveu
@@ -33,15 +28,9 @@ int main(){
             printf("\n");
         }
         i++;
-       // free(aux);
         scanf("%d", &n);
-        //printf("\n");
         dominoDestroi(jogo);
        
-
     }
-    return 0;
-
-   
-   
+    return 0;    
 }

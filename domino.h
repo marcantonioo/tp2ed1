@@ -21,16 +21,16 @@ typedef struct {
     Peca *pInicio, *pFim;
 }Dominol;
 
-void falso();
 Dominol* dominoCria();
 bool dominoDestroi();
 bool dominoAdicionaPecaInicio();
 bool dominoAdicionaPecaFinal();
 bool adicionaPecaMeio();
-bool dominoResolve();
+bool dominoEhPossivelOrganizar();
 void dominoImprime();
 bool dominoEhPossivelOrganizar();
 void atualizaPonteiros();
 void dominoLer();
+void dominoFalsificaPecas();//atualiza o foiUsada de todas as peças
 
 #endif

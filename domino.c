@@ -1,37 +1,27 @@
 #include "domino.h"
 
-void falso(Dominol *tabuleiro){
-    if(tabuleiro->pInicio == NULL || tabuleiro->pInicio->prox == NULL){
-        // printf("Tabuleiro Vazio\n");
-        return;
-    }
-    Peca* aux = tabuleiro->pInicio->prox;
-    while(aux != NULL){
-            aux->foiUsada = false;
-            aux = aux->prox;
-    }   
-}
 
 Dominol* dominoCria(int tamanho){
-    Dominol *tabuleiro = (Dominol*) malloc(sizeof(Dominol)); 
-    if (tabuleiro == NULL)
+    Dominol *tabuleiro = (Dominol*) malloc(sizeof(Dominol)); //aloca o tabuleiro
+    if (tabuleiro == NULL)//se n deu pra alocar retorna false
         return NULL;
-    tabuleiro->tamanho = tamanho;
+    tabuleiro->tamanho = tamanho;//atualiza o tamnho do tabuleiro
     tabuleiro->pInicio = (Peca*) malloc(sizeof(Peca));//aloca a cabeça
     if(tabuleiro->pInicio == NULL){
         free(tabuleiro);
         return NULL;
     }
-    tabuleiro->pInicio->prox = NULL;
+    tabuleiro->pInicio->prox = NULL;//inicia os indices 
     tabuleiro->pInicio->ant = NULL;
     tabuleiro->pFim = tabuleiro->pInicio;
     return tabuleiro;
 }
 
 bool dominoDestroi(Dominol* tabuleiro){
-    if (tabuleiro == NULL) return false; // Evita acessar memória inválida
+    if (tabuleiro == NULL);
+        return false; 
     Peca* aux = tabuleiro->pInicio;
-    while(aux != NULL){
+    while(aux != NULL){//percorre o tabuleiro liberand cada posição 
         Peca* aux2 = aux->prox;
         free(aux);
         aux = aux2;
@@ -44,7 +34,7 @@ bool dominoDestroi(Dominol* tabuleiro){
 bool dominoAdicionaPecaFinal(Dominol* tabuleiro, Peca* peca){
     if (tabuleiro == NULL ||peca == NULL)
         return false;
-    Peca *novaPeca = (Peca*) malloc(sizeof(Peca));
+    Peca *novaPeca = (Peca*) malloc(sizeof(Peca));//aloca uma novaPeca pra manipulação
     if(novaPeca == NULL){
         dominoDestroi(tabuleiro);
         return false;
@@ -52,12 +42,12 @@ bool dominoAdicionaPecaFinal(Dominol* tabuleiro, Peca* peca){
     novaPeca->x = peca->x;
     novaPeca->y = peca->y;
     novaPeca->prox = NULL;
-    if (tabuleiro->pInicio == tabuleiro->pFim) {
-        novaPeca->ant = tabuleiro->pInicio;
+    if (tabuleiro->pInicio == tabuleiro->pFim) {//se é a primeira peça a ser inserida
+        novaPeca->ant = tabuleiro->pInicio;//novapeca anterior aponta pro antigo inicio
         tabuleiro->pInicio->prox = novaPeca;
     } else {
-        novaPeca->ant = tabuleiro->pFim;
-        tabuleiro->pFim->prox = novaPeca;
+        novaPeca->ant = tabuleiro->pFim;//aponta pro antigo fim
+        tabuleiro->pFim->prox = novaPeca;//o fim agora aponta pra novapeca
     }
     tabuleiro->pFim = novaPeca;
 
@@ -66,49 +56,37 @@ bool dominoAdicionaPecaFinal(Dominol* tabuleiro, Peca* peca){
 
 
 bool adicionaPecaMeio(Dominol *tabuleiro, Peca *pecaAnterior, Peca *pecaSeguinte, Peca *novaPeca) {
-    // Verifica se os parâmetros são válidos
     if (tabuleiro == NULL || pecaAnterior == NULL || pecaSeguinte == NULL || novaPeca == NULL) {
-        return false; // Parâmetros inválidos
+        return false;
     }
-
-    // Verifica se as peças são consecutivas
-    if (pecaAnterior->prox != pecaSeguinte || pecaSeguinte->ant != pecaAnterior) {
-        return false; // As peças não estão corretamente conectadas
-    }
-
-    // Aloca uma nova peça para evitar modificar `novaPeca` diretamente
-    Peca *nova = (Peca*) malloc(sizeof(Peca));
+    Peca *nova = (Peca*) malloc(sizeof(Peca));//peca pra manipulação
     if (nova == NULL) {
-        return false; // Falha na alocação de memória
+        return false;
     }
-
-    // Copia os valores da peça fornecida
+    // Copia os valores 
     nova->x = novaPeca->x;
     nova->y = novaPeca->y;
     nova->foiUsada = false;
+    nova->ant = pecaAnterior;//nova aponta pra anterior
+    nova->prox = pecaSeguinte;//nova aponta pra seguinte
+    pecaAnterior->prox = nova;//a prox da anterior aponta pra nova
+    pecaSeguinte->ant = nova;//a ant da seguinte aponta pra nova
 
-    // Insere a nova peça na lista
-    nova->ant = pecaAnterior;
-    nova->prox = pecaSeguinte;
-    pecaAnterior->prox = nova;
-    pecaSeguinte->ant = nova;
+    tabuleiro->tamanho++;//atualiza o tamanho
 
-    // Atualiza o tamanho do tabuleiro
-    tabuleiro->tamanho++;
-
-    return true; // Inserção bem-sucedida
+    return true; 
 }
 
 
 //so chmar se peca tiver organizada
 bool dominoAdicionaPecaInicio(Dominol *tabuleiro, Peca *peca){
-    Peca* novaPeca = (Peca*) malloc(sizeof(Peca));
+    Peca* novaPeca = (Peca*) malloc(sizeof(Peca));//nova pra manipulaçao
     if(novaPeca == NULL)
         return false;
-
+    //substitui valores
     novaPeca->x = peca->x;
     novaPeca->y = peca->y;
-    novaPeca->prox = tabuleiro->pInicio->prox;
+    novaPeca->prox = tabuleiro->pInicio->prox;//a nova prox aponta pro antigo inicio
     novaPeca->ant = tabuleiro->pInicio; //Apont pra cabeça
     if(tabuleiro->pInicio->prox != NULL)
         tabuleiro->pInicio->prox->ant = novaPeca;
@@ -120,14 +98,14 @@ bool dominoAdicionaPecaInicio(Dominol *tabuleiro, Peca *peca){
 }
 
 
-void dominoInvertePeca(Peca **peca){
+void dominoInvertePeca(Peca **peca){//inverte uma peça
     int aux;
     aux = (*peca)->x;
     (*peca)->x = (*peca)->y;
     (*peca)->y = aux;
 }
 
-void dominoLer(Dominol *pJogo, int n){
+void dominoLer(Dominol *pJogo, int n){//lê todas as peças do dimino adicionando no final ate completar a lista
     Peca *aux = malloc(sizeof(Peca));
     for(int i = 0; i < n; i++){
         scanf("%d%d", &aux->x, &aux->y);
@@ -137,7 +115,19 @@ void dominoLer(Dominol *pJogo, int n){
     free(aux);
 }
 
-void dominoImprime(Dominol* tabPronto){
+void dominoFalsificaPecas(Dominol *tabuleiro){//atualiza o satus de foiUsada de todas as peças
+    if(tabuleiro->pInicio == NULL || tabuleiro->pInicio->prox == NULL){
+        // printf("Tabuleiro Vazio\n");
+        return;
+    }
+    Peca* aux = tabuleiro->pInicio->prox;
+    while(aux != NULL){
+            aux->foiUsada = false;
+            aux = aux->prox;
+    }   
+}
+
+void dominoImprime(Dominol* tabPronto){//imprime o jogo resolvido
     if(tabPronto->pInicio == NULL || tabPronto->pInicio->prox == NULL){
         // printf("Tabuleiro Vazio\n");
         return;
@@ -153,26 +143,20 @@ void dominoImprime(Dominol* tabPronto){
     }   
 }
  
-void atualizaPonteiros(Peca **pJogoOriginal, Dominol **pAux, Dominol **pTabuleiro){
+void atualizaPonteiros(Peca **pJogoOriginal, Dominol **pAux, Dominol **pTabuleiro){//avança os ponteiros com base na inserção das peças
     (*pJogoOriginal)->foiUsada = true;
     (*pJogoOriginal) = (*pTabuleiro)->pInicio->prox;
     (*pAux)->tamanho ++;
 }
 
 
-bool dominoResolve(Dominol **tabuleiro, Peca *pPecaInicial){
+bool dominoEhPossivelOrganizar(Dominol **tabuleiro, Peca *pPecaInicial){
     int tam = 1;
     Dominol *aux = dominoCria(tam);
-   // bool control = false;//controlar se houve inserção
 
     pPecaInicial->foiUsada = true;
     dominoAdicionaPecaInicio(aux, pPecaInicial);//o auxiliar começa com a 1º peça do 
-    //Peca *JogoOriginal = pPecaInicial->prox;
     Peca *JogoOriginal = (*tabuleiro)->pInicio->prox;
-    ///printf("[%d-%d]\n",JogoOriginal->ant->x,JogoOriginal->ant->y);
-
-    //inicia o domino auxiliar colocando a primeira peça pra iniciar
-   // while(aux->tamanho != tabuleiro->tamanho  control == false){
 
         while(JogoOriginal != NULL){//qunado sair desse while percorreu todas as peças inserindo ou não
             //control = false;
@@ -199,35 +183,34 @@ bool dominoResolve(Dominol **tabuleiro, Peca *pPecaInicial){
             }
         }
    // }
-    if(aux->tamanho == (*tabuleiro)->tamanho){
+    if(aux->tamanho == (*tabuleiro)->tamanho){//se resolveu 
         dominoDestroi(*tabuleiro);
         (*tabuleiro) = aux;
         return true;
     }else 
-    if(aux->tamanho == ((*tabuleiro)->tamanho) - 1 && (*tabuleiro)->tamanho > 2){
-        JogoOriginal= (*tabuleiro)->pInicio->prox;
+    if(aux->tamanho == ((*tabuleiro)->tamanho) - 1 && (*tabuleiro)->tamanho > 2){//aqui é se falta apenas uma peça pra inserir e essa peça contem o x e y iguais
+        
+        JogoOriginal= (*tabuleiro)->pInicio->prox;//aqui eu encontro essa peça
         while(JogoOriginal != NULL){
             if((JogoOriginal->foiUsada == false) && JogoOriginal->x == JogoOriginal->y){
-                //printf("\n\n%d [%d %d]\n\n",JogoOriginal->foiUsada, JogoOriginal->x, JogoOriginal->y);
                 break;
             }
             JogoOriginal = JogoOriginal->prox;
         }
+
         //nesse momento JogoOriginal é a peça que não foi usada
         Peca *JogoDoAux = aux->pInicio->prox;
-        while(JogoDoAux->prox != NULL){
+        while(JogoDoAux->prox != NULL){//aqui eu encontro uma posição na lista pra inserir
             if(JogoDoAux->y == JogoOriginal->x){
-               // printf("\n\nJogoDoAux: {%d%d} [%d%d] {%d%d}\n\n", JogoDoAux->x, JogoDoAux->y, JogoOriginal->x, JogoOriginal->y, JogoDoAux->prox->x, JogoDoAux->prox->y);
                 break;
             }
             JogoDoAux = JogoDoAux->prox;
         }
-
-        //dominoImprime(aux);
-        adicionaPecaMeio(aux, JogoDoAux, JogoDoAux->prox, JogoOriginal);
+        adicionaPecaMeio(aux, JogoDoAux, JogoDoAux->prox, JogoOriginal);//eu insiro JogoOriginal entre JogoDoAux e JogoDoAux->prox
         dominoDestroi(*tabuleiro);
-        (*tabuleiro) = aux;
+        (*tabuleiro) = aux;//substituo o tabuleiro na main
         return true;
+
     }else{//se não encontrou solução retorna false 
         dominoDestroi(aux);
         return false;
