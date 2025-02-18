@@ -18,7 +18,7 @@ Dominol* dominoCria(int tamanho){
 }
 
 bool dominoDestroi(Dominol* tabuleiro){
-    if (tabuleiro == NULL);
+    if (tabuleiro == NULL)
         return false; 
     Peca* aux = tabuleiro->pInicio;
     while(aux != NULL){//percorre o tabuleiro liberand cada posição 
@@ -149,6 +149,11 @@ void atualizaPonteiros(Peca **pJogoOriginal, Dominol **pAux, Dominol **pTabuleir
     (*pAux)->tamanho ++;
 }
 
+/*
+Complexidade assintótica O(n^2), devido a dominoDestroi que é a função com mainor grau de n,
+mas devido ao do while presente na main que percorre todas as peças onde dominoEhPossívelOrganizar é chmado, 
+a complexidade fica O(n) * O(n^2), resultando em O(n^3);
+*/
 
 bool dominoEhPossivelOrganizar(Dominol **tabuleiro, Peca *pPecaInicial){
     int tam = 1;

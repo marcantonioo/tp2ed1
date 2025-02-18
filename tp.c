@@ -11,6 +11,7 @@ int main(){
         jogo = dominoCria(n); 
         dominoLer(jogo, n);
         pPecaInicial = jogo->pInicio->prox;
+        //complexidade assintótica O(n^3)
         do{ 
             dominoFalsificaPecas(jogo);
             jaResolveu =  dominoEhPossivelOrganizar(&jogo, pPecaInicial);//tenta organizar começando da primeira peça
